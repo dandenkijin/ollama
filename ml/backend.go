@@ -101,6 +101,7 @@ type Context interface {
 	FromBytes(dtype DType, s []byte, shape ...int) Tensor
 	FromFloats(s []float32, shape ...int) Tensor
 	FromInts(s []int32, shape ...int) Tensor
+	FromInts64(s []int64, shape ...int) Tensor
 
 	// Arange creates a 1D tensor with values within an interval (start, stop] increased by step.
 	Arange(start, stop, step float32, dtype DType) Tensor
@@ -193,6 +194,7 @@ type Tensor interface {
 	Repeat(ctx Context, dim, n int) Tensor
 	Concat(ctx Context, t2 Tensor, dim int) Tensor
 	Rows(ctx Context, t2 Tensor) Tensor
+	SetRows(ctx Context, t2 Tensor, t3 Tensor) Tensor
 	Copy(ctx Context, t2 Tensor) Tensor
 	Duplicate(ctx Context) Tensor
 
@@ -369,6 +371,7 @@ const (
 	DTypeF16
 	DTypeQ80
 	DTypeQ40
+	DTypeI64
 	DTypeI32
 	DTypeMXFP4
 )
