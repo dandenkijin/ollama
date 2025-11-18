@@ -103,6 +103,10 @@ var (
 	errBadTemplate = errors.New("template error")
 )
 
+func isTOONFormat(format json.RawMessage) bool {
+	return string(format) == `"toon"`
+}
+
 func modelOptions(model *Model, requestOpts map[string]any) (api.Options, error) {
 	opts := api.DefaultOptions()
 	if err := opts.FromMap(model.Options); err != nil {
@@ -560,6 +564,16 @@ func (s *Server) GenerateHandler(c *gin.Context) {
 				res.DoneReason = cr.DoneReason.String()
 				res.TotalDuration = time.Since(checkpointStart)
 				res.LoadDuration = checkpointLoaded.Sub(checkpointStart)
+
+				// Check if the response should be in TOON format and convert if needed
+				if len(req.Format) > 0 && isTOONFormat(req.Format) {
+					// Try to convert the response to TOON format
+					toonData, err := toon.ConvertJSONToTOON([]byte(res.Response))
+					if err == nil {
+						res.Response = string(toonData)
+					}
+					// If conversion fails, we'll keep the original JSON response
+				}
 
 				if !req.Raw {
 					tokens, err := r.Tokenize(c.Request.Context(), prompt+sb.String())
@@ -2160,6 +2174,16 @@ func (s *Server) ChatHandler(c *gin.Context) {
 					res.DoneReason = r.DoneReason.String()
 					res.TotalDuration = time.Since(checkpointStart)
 					res.LoadDuration = checkpointLoaded.Sub(checkpointStart)
+
+					// Check if the response should be in TOON format and convert if needed
+					if len(req.Format) > 0 && isTOONFormat(req.Format) {
+						// Try to convert the response to TOON format
+						toonData, err := toon.ConvertJSONToTOON([]byte(res.Message.Content))
+						if err == nil {
+							res.Message.Content = string(toonData)
+						}
+						// If conversion fails, we'll keep the original JSON response
+					}
 				}
 
 				if builtinParser != nil {

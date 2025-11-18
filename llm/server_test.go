@@ -236,7 +236,7 @@ func TestLLMServerCompletionFormat(t *testing.T) {
 			Format:  []byte(format),
 		}, nil)
 
-		want := fmt.Sprintf("invalid format: %q; expected \"json\" or a valid JSON Schema", format)
+		want := fmt.Sprintf("invalid format: %q; expected \"json\", \"toon\", or a valid JSON Schema", format)
 		if err == nil || !strings.Contains(err.Error(), want) {
 			t.Fatalf("err = %v; want %q", err, want)
 		}
@@ -262,6 +262,11 @@ func TestLLMServerCompletionFormat(t *testing.T) {
 
 		// JSON
 		`"json"`,
+		
+		// TOON
+		`"toon"`,
+		
+		// JSON Schema
 		`{"type":"object"}`,
 	}
 	for _, valid := range valids {

@@ -1473,9 +1473,20 @@ func (s *llmServer) Completion(ctx context.Context, req CompletionRequest, fn fu
 			break
 		case `"json"`:
 			req.Grammar = grammarJSON
+		case `"toon"`:
+			// TOON format support - generate a grammar for TOON format
+			// For now, we'll use a simple grammar that allows general TOON structures
+			req.Grammar = `root ::= object
+object ::= "{" pair* "}"
+pair ::= string ":" value
+value ::= string | number | object | array | "true" | "false" | "null"
+array ::= "[" [value ("," value)*] "]"
+string ::= "\"" ([^"\\] | "\\" .)* "\""
+number ::= "-"? [0-9]+ ("." [0-9]+)? ([eE] [+-]? [0-9]+)?
+`
 		default:
 			if req.Format[0] != '{' {
-				return fmt.Errorf("invalid format: %q; expected \"json\" or a valid JSON Schema object", req.Format)
+				return fmt.Errorf("invalid format: %q; expected \"json\", \"toon\", or a valid JSON Schema object", req.Format)
 			}
 
 			// User provided a JSON schema
