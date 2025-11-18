@@ -568,7 +568,7 @@ func (s *Server) GenerateHandler(c *gin.Context) {
 				// Check if the response should be in TOON format and convert if needed
 				if len(req.Format) > 0 && isTOONFormat(req.Format) {
 					// Try to convert the response to TOON format
-					toonData, err := toon.ConvertJSONToTOON([]byte(res.Response))
+					toonData, err := format.ConvertJSONToTOON([]byte(res.Response))
 					if err == nil {
 						res.Response = string(toonData)
 					}
@@ -2178,7 +2178,7 @@ func (s *Server) ChatHandler(c *gin.Context) {
 					// Check if the response should be in TOON format and convert if needed
 					if len(req.Format) > 0 && isTOONFormat(req.Format) {
 						// Try to convert the response to TOON format
-						toonData, err := toon.ConvertJSONToTOON([]byte(res.Message.Content))
+						toonData, err := format.ConvertJSONToTOON([]byte(res.Message.Content))
 						if err == nil {
 							res.Message.Content = string(toonData)
 						}
